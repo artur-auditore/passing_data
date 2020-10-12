@@ -5,6 +5,7 @@ void main() {
   runApp(
     MaterialApp(
       title: "Passing data",
+      debugShowCheckedModeBanner: false,
       home:  TodosScreen(
         todos: List.generate(
           25, 
@@ -18,7 +19,6 @@ void main() {
 class TodosScreen extends StatelessWidget {
   final List<Todo> todos;
 
-  //requiring the list of todos
   TodosScreen({Key key, @required this.todos}) : super(key: key);
 
   @override
@@ -27,14 +27,41 @@ class TodosScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Todos'),
       ),
-      //passing in the ListView.builder
       body: ListView.builder(
         itemCount: todos.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(todos[index].title)
+            title: Text(todos[index].title),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailScreen(),
+                  settings: RouteSettings(
+                    arguments: todos[index],
+                  ),
+                ),
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final Todo todo = ModalRoute.of(context).settings.arguments;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(todo.title),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text(todo.description),
       ),
     );
   }
